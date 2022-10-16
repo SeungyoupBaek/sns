@@ -5,8 +5,10 @@ import com.youp.sns.exception.SnsApplicationException;
 import com.youp.sns.model.User;
 import com.youp.sns.model.entity.UserEntity;
 import com.youp.sns.repository.UserEntityRepository;
+import com.youp.sns.util.JwtTokenUtils;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,12 @@ public class UserService {
 
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms}")
+    private Long expiredTimeMs;
 
     @Transactional
     public User join(String userName, String password) {
@@ -40,8 +48,9 @@ public class UserService {
             throw new SnsApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
-        //
+        // 토큰 생성
+        String token = JwtTokenUtils.generateToken(userName, secretKey, expiredTimeMs);
 
-        return "";
+        return token;
     }
 }

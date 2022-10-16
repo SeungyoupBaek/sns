@@ -18,3 +18,9 @@ spring:
   sql:
     init:
       platform: postgres
+
+
+jwt:
+  secret-key: my_toy_project.sns-application-2022.secret-key
+  # 30 days
+  token.expired-time-ms: 2592000000
