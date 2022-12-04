@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+
+  database:
+    container_name: postgres
+#    image: postgres:latest
+    build:
+      context: "${DB_BUILD_CONTEXT}"
+      dockerfile: Dockerfile-postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: "${DB_USER_ID}"
+      POSTGRES_PASSWORD: "${DB_USER_PASSWORD}"
+      APP_DB_NAME: "${APP_DB_NAME}"
+      APP_DB_USER: "${APP_DB_USER}"
+      APP_DB_PASSWORD: "${APP_DB_PASSWORD}"
+    volumes:
+      - /Users/seungyoupbaek/IdeaProjects/docker-postgres/:/var/lib/postgresql/data
+
+  cache:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - /Users/seungyoupbaek/IdeaProjects/docker-redis/:/data
+
+#  application:
+#    container_name: sns
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - 8080:8080
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/sns
+#      SPRING_DATASOURCE_USERNAME: ncbetsqajvjgvv
+#      SPRING_DATASOURCE_PASSWORD: 43149b78076bea5c6b0b5c0b9a11b9101f1c0434c4a1a565dd5b05231563efcb
+#    depends_on:
+#      - database
+#      - cache
