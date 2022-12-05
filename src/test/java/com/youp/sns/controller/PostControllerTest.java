@@ -232,7 +232,7 @@ public class PostControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
+    @WithMockUser
     void 좋아요버튼클릭시_게시물이_없는경우() throws Exception {
         doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).like(any(), any());
         mockMvc.perform(post("/api/v1/posts/1/likes")
