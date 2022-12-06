@@ -9,6 +9,8 @@ import com.youp.sns.util.JwtTokenUtils;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,6 @@ public class UserService {
         return User.fromEntity(userEntity);
     }
 
-    // TODO : implement
     public String login(String userName, String password) {
         // 회운가입 여부 체크
         UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(
@@ -60,5 +61,9 @@ public class UserService {
         String token = JwtTokenUtils.generateToken(userName, secretKey, expiredTimeMs);
 
         return token;
+    }
+
+    public Page<Void> alarmList(String userName, Pageable pageable) {
+        return Page.empty();
     }
 }
