@@ -2,12 +2,16 @@ package com.youp.sns.service;
 
 import com.youp.sns.exception.ErrorCode;
 import com.youp.sns.exception.SnsApplicationException;
+import com.youp.sns.model.AlarmArgs;
+import com.youp.sns.model.AlarmType;
 import com.youp.sns.model.Comment;
 import com.youp.sns.model.Post;
+import com.youp.sns.model.entity.AlarmEntity;
 import com.youp.sns.model.entity.CommentEntity;
 import com.youp.sns.model.entity.LikeEntity;
 import com.youp.sns.model.entity.PostEntity;
 import com.youp.sns.model.entity.UserEntity;
+import com.youp.sns.repository.AlarmEntityRepository;
 import com.youp.sns.repository.CommentEntityRepository;
 import com.youp.sns.repository.LikeEntityRepository;
 import com.youp.sns.repository.PostEntityRepository;
@@ -27,6 +31,7 @@ public class PostService {
     private final UserEntityRepository userEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
+    private final AlarmEntityRepository alarmEntityRepository;
 
     @Transactional
     public void create(String title, String body, String userName) {
@@ -82,6 +87,8 @@ public class PostService {
         });
 
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
+
+        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
     }
 
     public int likeCount(Integer postId) {
@@ -96,6 +103,8 @@ public class PostService {
         PostEntity postEntity = getPostEntityOrException(postId);
 
         commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
+
+        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_COMMENT_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
     }
 
     public Page<Comment> getComments(Integer postId, Pageable pageable) {

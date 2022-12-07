@@ -2,8 +2,10 @@ package com.youp.sns.service;
 
 import com.youp.sns.exception.ErrorCode;
 import com.youp.sns.exception.SnsApplicationException;
+import com.youp.sns.model.Alarm;
 import com.youp.sns.model.User;
 import com.youp.sns.model.entity.UserEntity;
+import com.youp.sns.repository.AlarmEntityRepository;
 import com.youp.sns.repository.UserEntityRepository;
 import com.youp.sns.util.JwtTokenUtils;
 import javax.transaction.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserEntityRepository userEntityRepository;
+    private final AlarmEntityRepository alarmEntityRepository;
     private final BCryptPasswordEncoder encoder;
 
     @Value("${jwt.secret-key}")
@@ -63,7 +66,10 @@ public class UserService {
         return token;
     }
 
-    public Page<Void> alarmList(String userName, Pageable pageable) {
-        return Page.empty();
+    public Page<Alarm> alarmList(String userName, Pageable pageable) {
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(
+                () -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+
+        return alarmEntityRepository.findAllByUser(userEntity, pageable).map(Alarm::fromEntity);
     }
 }

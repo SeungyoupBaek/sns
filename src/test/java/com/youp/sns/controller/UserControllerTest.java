@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -50,7 +49,6 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
-                        // TODO : add request body
                         .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))
                 ).andDo(print())
                 .andExpect(status().isOk());
@@ -66,7 +64,6 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
-                        // TODO : add request body
                         .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))
                 ).andDo(print())
                 .andExpect(status().isConflict());
