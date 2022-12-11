@@ -8,6 +8,8 @@ import com.youp.sns.controller.response.UserJoinResponse;
 import com.youp.sns.controller.response.UserLoginResponse;
 import com.youp.sns.model.User;
 import com.youp.sns.service.UserService;
+import com.youp.sns.util.ClassUtils;
+import java.security.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +41,8 @@ public class UserController {
 
     @GetMapping("/alarm")
     public Response<Page<AlarmResponse>> alarm(Pageable pageable, Authentication authentication) {
-        return Response.success(userService.alarmList(authentication.getName(), pageable).map(AlarmResponse::fromAlarm));
+        User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+                .orElseThrow(InvalidParameterException::new);
+        return Response.success(userService.alarmList(user.getId(), pageable).map(AlarmResponse::fromAlarm));
     }
 }
