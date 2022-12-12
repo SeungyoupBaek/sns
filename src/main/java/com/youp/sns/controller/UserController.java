@@ -6,6 +6,8 @@ import com.youp.sns.controller.response.AlarmResponse;
 import com.youp.sns.controller.response.Response;
 import com.youp.sns.controller.response.UserJoinResponse;
 import com.youp.sns.controller.response.UserLoginResponse;
+import com.youp.sns.exception.ErrorCode;
+import com.youp.sns.exception.SnsApplicationException;
 import com.youp.sns.model.User;
 import com.youp.sns.service.UserService;
 import com.youp.sns.util.ClassUtils;
@@ -42,7 +44,8 @@ public class UserController {
     @GetMapping("/alarm")
     public Response<Page<AlarmResponse>> alarm(Pageable pageable, Authentication authentication) {
         User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
-                .orElseThrow(InvalidParameterException::new);
+                .orElseThrow(() -> new SnsApplicationException(ErrorCode.INTERNAL_SERVER_ERROR,
+                        "Casting to User class failed"));
         return Response.success(userService.alarmList(user.getId(), pageable).map(AlarmResponse::fromAlarm));
     }
 }

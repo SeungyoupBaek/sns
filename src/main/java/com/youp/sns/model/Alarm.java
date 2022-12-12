@@ -5,7 +5,9 @@ import com.youp.sns.model.entity.CommentEntity;
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @AllArgsConstructor
 public class Alarm {
@@ -18,6 +20,7 @@ public class Alarm {
     private Timestamp deletedAt;
 
     public static Alarm fromEntity(AlarmEntity alarmEntity) {
+        log.info("==== Call fromEntity");
         return new Alarm(
                 alarmEntity.getId(),
                 User.fromEntity(alarmEntity.getUser()),
