@@ -6,6 +6,7 @@ import com.youp.sns.model.Alarm;
 import com.youp.sns.model.User;
 import com.youp.sns.model.entity.UserEntity;
 import com.youp.sns.repository.AlarmEntityRepository;
+import com.youp.sns.repository.UserCacheRepository;
 import com.youp.sns.repository.UserEntityRepository;
 import com.youp.sns.util.JwtTokenUtils;
 import javax.transaction.Transactional;
@@ -23,6 +24,7 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final AlarmEntityRepository alarmEntityRepository;
     private final BCryptPasswordEncoder encoder;
+    private final UserCacheRepository userCacheRepository;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -31,9 +33,11 @@ public class UserService {
     private Long expiredTimeMs;
 
     public User loadUserByUserName(String userName) {
-        return userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(
-                () -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND,
-                        String.format("%s is not founded.", userName)));
+        return userCacheRepository.getUser(userName).orElseGet(() ->
+                userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(
+                        () -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND,
+                                String.format("%s is not founded.", userName)))
+        );
     }
 
     @Transactional
@@ -52,11 +56,11 @@ public class UserService {
 
     public String login(String userName, String password) {
         // 회운가입 여부 체크
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(
-                () -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+        User user = loadUserByUserName(userName);
+        userCacheRepository.setUser(user);
 
         // 비밀번호 체크
-        if (!encoder.matches(password, userEntity.getPassword())) {
+        if (!encoder.matches(password, user.getPassword())) {
             throw new SnsApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 

@@ -18,9 +18,12 @@ spring:
   sql:
     init:
       platform: postgres
+  redis:
+    url: redis://localhost:6379
 
 
 jwt:
   secret-key: my_toy_project.sns-application-2022.secret-key
   # 30 days
   token.expired-time-ms: 2592000000
+
