@@ -12,7 +12,6 @@ import com.youp.sns.model.User;
 import com.youp.sns.service.AlarmService;
 import com.youp.sns.service.UserService;
 import com.youp.sns.util.ClassUtils;
-import java.security.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
