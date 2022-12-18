@@ -46,4 +46,5 @@ jwt:
   # 30 days
   token.expired-time-ms: 2592000000
 
-
+aspect:
+  enabled: true

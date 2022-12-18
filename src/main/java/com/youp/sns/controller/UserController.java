@@ -1,5 +1,6 @@
 package com.youp.sns.controller;
 
+import com.youp.sns.configuration.TrackExecutionTime;
 import com.youp.sns.controller.request.UserJoinRequest;
 import com.youp.sns.controller.request.UserLoginRequest;
 import com.youp.sns.controller.response.AlarmResponse;
@@ -37,6 +38,7 @@ public class UserController {
         return Response.success(UserJoinResponse.fromUser(user));
     }
 
+    @TrackExecutionTime
     @PostMapping("/login")
     public Response<UserLoginResponse> join(@RequestBody UserLoginRequest request) {
         String token = userService.login(request.getUserName(), request.getPassword());
