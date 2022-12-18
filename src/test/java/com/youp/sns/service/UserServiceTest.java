@@ -1,7 +1,6 @@
 package com.youp.sns.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.youp.sns.exception.ErrorCode;
@@ -11,6 +10,7 @@ import com.youp.sns.model.entity.UserEntity;
 import com.youp.sns.repository.UserEntityRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,11 +30,12 @@ class UserServiceTest {
     private BCryptPasswordEncoder encoder;
 
     @Test
-    void 회원가입이_정상적으로_동작하는_경우() {
+    @DisplayName("회원가입이_정상적으로_동작하는_경우")
+    void join() {
         String userName = "userName";
         String password = "password";
 
-         //mocking
+        //mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
         when(encoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName, password, 1));
@@ -43,7 +44,8 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입시_userName으로_회원가입한_유저가_이미_있는경우() {
+    @DisplayName("회원가입시_userName 으로_회원가입한_유저가_이미_있는경우")
+    void join_duplicated() {
         String userName = "userName";
         String password = "password";
 
@@ -54,12 +56,14 @@ class UserServiceTest {
         when(encoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
 
-        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> userService.join(userName, password));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,
+                () -> userService.join(userName, password));
         Assertions.assertEquals(ErrorCode.DUPLICATED_USER_NAME, e.getErrorCode());
     }
 
     @Test
-    void 로그인이_정상적으로_동작하는_경우() {
+    @DisplayName("로그인이_정상적으로_동작하는_경우")
+    void login() {
         String userName = "userName";
         String password = "password";
 
@@ -73,19 +77,22 @@ class UserServiceTest {
     }
 
     @Test
-    void 로그인시_userName으로_회원가입한_유저가_없는경우() {
+    @DisplayName("로그인시_userName 으로_회원가입한_유저가_없는경우")
+    void login_notExist() {
         String userName = "userName";
         String password = "password";
 
         //mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
 
-        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, password));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,
+                () -> userService.login(userName, password));
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
 
     @Test
-    void 로그인시_패스워드가_틀린_경우() {
+    @DisplayName("로그인시_패스워드가_틀린_경우")
+    void login_wrongPassword() {
         String userName = "userName";
         String password = "password";
         String wrongPassword = "wrongPassword";
@@ -95,7 +102,8 @@ class UserServiceTest {
         //mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
 
-        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, wrongPassword));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class,
+                () -> userService.login(userName, wrongPassword));
         Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
     }
 
