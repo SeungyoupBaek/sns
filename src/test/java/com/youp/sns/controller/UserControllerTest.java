@@ -15,6 +15,7 @@ import com.youp.sns.exception.ErrorCode;
 import com.youp.sns.exception.SnsApplicationException;
 import com.youp.sns.model.User;
 import com.youp.sns.service.UserService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,7 +41,8 @@ public class UserControllerTest {
     private UserService userService;
 
     @Test
-    public void 회원가입() throws Exception {
+    @DisplayName("회원가입")
+    void join() throws Exception {
         String userName = "userName";
         String password = "password";
 
@@ -55,7 +57,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void 회원가입시_이미_회원가입된_userName으로_회원가입을_하는경우_에러반환() throws Exception {
+    @DisplayName("회원가입시_이미_회원가입된_userName 으로_회원가입을_하는경우_에러반환")
+    void join_duplicate_userName() throws Exception {
         String userName = "userName";
         String password = "password";
 
@@ -70,7 +73,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void 로그인() throws Exception {
+    @DisplayName("로그인")
+    void login() throws Exception {
         String userName = "userName";
         String password = "password";
 
@@ -84,7 +88,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void 로그인시_회원가입이_안된_userName을_입력한경우_에러반환() throws Exception {
+    @DisplayName("로그인시_회원가입이_안된_userName 을_입력한경우_에러반환")
+    void login_notJoinUserName() throws Exception {
         String userName = "userName";
         String password = "password";
 
@@ -98,7 +103,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void 로그인시_틀린_password를_입력할경우_에러반환() throws Exception {
+    @DisplayName("로그인시_틀린_password 를_입력할경우_에러반환")
+    void login_wrongPassword() throws Exception {
         String userName = "userName";
         String password = "password";
 
@@ -113,7 +119,8 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser
-    void 알람기능() throws Exception {
+    @DisplayName("알람기능")
+    void alarm() throws Exception {
         when(userService.alarmList(any(), any())).thenReturn(Page.empty());
         mockMvc.perform(get("/api/v1/users/alarm")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -123,7 +130,8 @@ public class UserControllerTest {
 
     @Test
     @WithAnonymousUser
-    void 알람리스트요청시_로그인하지_않은경우() throws Exception {
+    @DisplayName("알람리스트요청시_로그인하지_않은경우")
+    void alarm_notLoginState() throws Exception {
         when(userService.alarmList(any(), any())).thenReturn(Page.empty());
         mockMvc.perform(get("/api/v1/users/alarm")
                         .contentType(MediaType.APPLICATION_JSON))

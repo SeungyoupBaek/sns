@@ -23,7 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @SpringBootTest
-public class PostServiceTest {
+class PostServiceTest {
     @Autowired
     private PostService postService;
 
